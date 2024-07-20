@@ -1,0 +1,9 @@
+{
+  "env": {
+    "CONNECTION_STRING": "<YOUR CONNECTION STRING>",
+    "PORT": "<YOUR Port>"
+  },
+  "watch": ["src"],
+  "ext": "js,json",
+  "exec": "node ./src/app.js"
+}

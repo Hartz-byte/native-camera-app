@@ -10,9 +10,21 @@ const Navigation = () => {
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="MainPage" component={MainPage} />
-      <Stack.Screen name="RegisterLogin" component={RegisterLogin} />
-      <Stack.Screen name="Camera" component={Camera} />
+      <Stack.Screen
+        name="MainPage"
+        component={MainPage}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="RegisterLogin"
+        component={RegisterLogin}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Camera"
+        component={Camera}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

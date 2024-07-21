@@ -7,12 +7,15 @@ import {
   TextInput,
   Button,
 } from "react-native";
+import axios from "axios";
 
 const RegisterLogin = ({ navigation }) => {
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
   const [userData, setUserData] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   // login/register switch
@@ -20,7 +23,10 @@ const RegisterLogin = ({ navigation }) => {
     setUserData({
       email: "",
       password: "",
+      confirmPassword: "",
     });
+
+    setError("");
 
     setOpen(!open);
   };
@@ -35,24 +41,66 @@ const RegisterLogin = ({ navigation }) => {
     setUserData({ ...userData, password: text });
   };
 
-  // handle registration
-  const handleRegister = () => {
-    console.log("registration data: ", userData);
+  // input confirm password change
+  const confirmPasswordChange = (text) => {
+    setUserData({ ...userData, confirmPassword: text });
+  };
 
-    setUserData({
-      email: "",
-      password: "",
-    });
+  // handle register
+  const handleRegister = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "http://192.168.29.24:3002/auth/",
+        userData
+      );
+
+      setUserData({
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      setError("");
+
+      setOpen(!open);
+
+      console.log("Registration successful:", response.userData);
+    } catch (error) {
+      setError(error.message);
+      console.error("Registration failed:", error);
+    }
   };
 
   // handle login
-  const handleLogin = () => {
-    console.log("login data: ", userData);
+  const handleLogin = async (event) => {
+    event.preventDefault();
 
-    setUserData({
-      email: "",
-      password: "",
-    });
+    if (!userData.email || !userData.password) {
+      console.log("empty");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://192.168.29.24:3002/auth/login",
+        userData
+      );
+
+      setUserData({
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      setError("");
+
+      console.log("Login successful:");
+    } catch (error) {
+      setError(error.message);
+      console.error("Login failed:", error);
+    }
   };
 
   return (
@@ -104,6 +152,20 @@ const RegisterLogin = ({ navigation }) => {
             }}
           />
 
+          {/* confirm password input */}
+          <TextInput
+            placeholder="Enter password"
+            value={userData.confirmPassword}
+            onChangeText={confirmPasswordChange}
+            style={{
+              width: "70%",
+              height: 40,
+              backgroundColor: "#fefae0",
+              padding: 10,
+              borderRadius: 7,
+            }}
+          />
+
           <View style={{ display: "flex", flexDirection: "row", gap: 6 }}>
             <Text>Already have an account?</Text>
 
@@ -116,6 +178,12 @@ const RegisterLogin = ({ navigation }) => {
 
           {/* submit button */}
           <Button title="Register" onPress={handleRegister} />
+
+          {error ? (
+            <View>
+              <Text style={{ color: "red" }}>{error}</Text>
+            </View>
+          ) : null}
         </View>
       ) : (
         // login
@@ -165,6 +233,12 @@ const RegisterLogin = ({ navigation }) => {
 
           {/* login button */}
           <Button title="Login" onPress={handleLogin} />
+
+          {error ? (
+            <View>
+              <Text style={{ color: "red" }}>{error}</Text>
+            </View>
+          ) : null}
         </View>
       )}
     </SafeAreaView>
